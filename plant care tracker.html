@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Care Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .plant { border: 1px solid #ccc; padding: 10px; margin: 10px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Plant Care Tracker</h1>
+    <button onclick="toggleAddPlantForm()">Add a New Plant</button>
+    
+    <div id="addPlantForm" class="hidden">
+        <h2>Add a New Plant</h2>
+        <label for="name">Plant Name:</label><br>
+        <input type="text" id="name" required><br><br>
+        
+        <label for="species">Species:</label><br>
+        <input type="text" id="species" required><br><br>
+        
+        <label for="watering_frequency">Watering Frequency (days):</label><br>
+        <input type="number" id="watering_frequency" required><br><br>
+        
+        <label for="fertilizing_frequency">Fertilizing Frequency (days):</label><br>
+        <input type="number" id="fertilizing_frequency" required><br><br>
+        
+        <button onclick="addPlant()">Add Plant</button>
+    </div>
+
+    <div id="plantsContainer"></div>
+
+    <script>
+        const plants = [];
+
+        function toggleAddPlantForm() {
+            const form = document.getElementById('addPlantForm');
+            form.classList.toggle('hidden');
+        }
+
+        function addPlant() {
+            const name = document.getElementById('name').value;
+            const species = document.getElementById('species').value;
+            const wateringFrequency = document.getElementById('watering_frequency').value;
+            const fertilizingFrequency = document.getElementById('fertilizing_frequency').value;
+
+            const plant = {
+                name,
+                species,
+                wateringFrequency,
+                fertilizingFrequency,
+                lastWatered: null,
+                lastFertilized: null
+            };
+
+            plants.push(plant);
+            renderPlants();
+            clearForm();
+            toggleAddPlantForm();
+        }
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('species').value = '';
+            document.getElementById('watering_frequency').value = '';
+            document.getElementById('fertilizing_frequency').value = '';
+        }
+
+        function renderPlants() {
+            const container = document.getElementById('plantsContainer');
+            container.innerHTML = '';
+
+            plants.forEach((plant, index) => {
+                const plantDiv = document.createElement('div');
+                plantDiv.className = 'plant';
+                plantDiv.innerHTML = `
+                    <h2>${plant.name}</h2>
+                    <p><strong>Species:</strong> ${plant.species}</p>
+                    <p><strong>Watering Frequency:</strong> ${plant.wateringFrequency} days</p>
+                    <p><strong>Fertilizing Frequency:</strong> ${plant.fertilizingFrequency} days</p>
+                    <p><strong>Last Watered:</strong> ${plant.lastWatered ? plant.lastWatered : 'Not Watered Yet'}</p>
+                    <p><strong>Last Fertilized:</strong> ${plant.lastFertilized ? plant.lastFertilized : 'Not Fertilized Yet'}</p>
+                    <button onclick="waterPlant(${index})">Water</button>
+                    <button onclick="fertilizePlant(${index})">Fertilize</button>
+                `;
+                container.appendChild(plantDiv);
+            });
+        }
+
+        function waterPlant(index) {
+            plants[index].lastWatered = new Date().toLocaleString();
+            renderPlants();
+        }
+
+        function fertilizePlant(index) {
+            plants[index].lastFertilized = new Date().toLocaleString();
+            renderPlants();
+        }
+    </script>
+</body>
+</html>
